@@ -1,10 +1,38 @@
 from kaggle import KaggleApi
 
+import discord
+import asyncio
+from discord import app_commands
+
+token = "MTIxNDUyMzQzMzA1MzA2MTE5MA.GXe1XW.TsdrTd8dLJYdfrwMEzwvwlGS_83iXpjh_tYvcM"
+
+MY_GUILD = discord.Object(id=1214464623953321984)
+class MyClient(discord.Client):
+  def __init__(self,*,intents:discord.Intents):
+    super().__init__(intents=intents)
+    self.tree = app_commands.CommandTree(self)
+  async def setup_hook(self):
+      self.tree.copy_global_to(guild=MY_GUILD)
+      await self.tree.sync(guild=MY_GUILD)
+
+intent = discord.Intents.default()
+intent.message_content = True
+intent.members = True
+client = MyClient(intents=intent)
+
+@client.event
+async def on_ready():
+  print("botが起動しました。")
+
+@client.event
+async def on_message(messages):
+  if messages.content == "kaggle-ranking-list":
+    competitions = api.competitions_list(search='titanic')
+    for competition in competitions:
+      print(competition.ref)
+
 api = KaggleApi()
 api.authenticate()
 print(type(api))
 
-
-competitions = api.competitions_list(search='titanic')
-for competition in competitions:
-    print(competition.ref)
+client.run(token)

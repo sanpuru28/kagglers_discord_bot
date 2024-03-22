@@ -25,6 +25,14 @@ async def on_ready():
   print("botが起動しました。")
 
 @client.event
+async def on_member_join(member):
+  print(f"{member.name}参戦")
+  user = await client.fetch_user(member.id)
+  await user.send("舐め放題ペにペに")
+  
+
+
+@client.event
 async def on_message(messages):
   if messages.content == "kaggle-ranking-list":
     competitions = api.competitions_list(search='titanic')
